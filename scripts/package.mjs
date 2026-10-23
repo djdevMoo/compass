@@ -49,7 +49,7 @@ const appPkg = {
 };
 fs.mkdirSync(appDir, { recursive: true });
 fs.writeFileSync(path.join(appDir, 'package.json'), JSON.stringify(appPkg, null, 2));
-for (const f of ['main.mjs', 'preload.cjs', 'store.mjs', 'installer.mjs']) {
+for (const f of fs.readdirSync(path.join(root, 'electron')).filter((n) => /\.(mjs|cjs)$/.test(n))) {
   fs.cpSync(path.join(root, 'electron', f), path.join(appDir, 'electron', f));
 }
 fs.cpSync(path.join(root, 'dist'), path.join(appDir, 'dist'), { recursive: true });

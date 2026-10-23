@@ -95,6 +95,8 @@ export const DEFAULT_SETTINGS: Settings = {
   modules: [...ALL_MODULES],
   theme: 'dark',
   accent: DEFAULT_ACCENT,
+  autoCheckUpdates: true,
+  lastVersion: '',
   uiScale: 1,
   sidebarCollapsed: false,
   lastPage: 'home',

@@ -23,6 +23,17 @@ interface Backend {
   apply(ops: Op[]): Promise<void>;
 }
 
+export interface UpdateInfo {
+  available: boolean;
+  current: string;
+  version?: string;
+  notes?: string;
+  pageUrl?: string | null;
+  size?: number;
+  /** False in development builds: updates only install into the installed app. */
+  canInstall?: boolean;
+}
+
 export interface InstallInfo {
   /** 'install' when Compass.exe is running from a download folder and should install itself. */
   mode: 'install' | 'app';
@@ -43,8 +54,12 @@ export interface DesktopBridge {
   openExternal(url: string): Promise<void>;
   setTheme(source: 'dark' | 'light' | 'system', resolved: 'dark' | 'light'): Promise<void>;
   resetData(): Promise<void>;
+  checkForUpdate(): Promise<UpdateInfo>;
+  installUpdate(): Promise<void>;
+  onUpdateProgress(fn: (progress: number, label: string) => void): void;
   installInfo(): Promise<InstallInfo>;
-  install(opts: { desktopShortcut: boolean }): Promise<void>;
+  /** Leave desktopShortcut out to keep the user's current choice (used by updates). */
+  install(opts: { desktopShortcut?: boolean }): Promise<void>;
   launchInstalled(): Promise<void>;
   onInstallProgress(fn: (progress: number, label: string) => void): void;
   onFlushRequest(fn: () => Promise<void>): void;

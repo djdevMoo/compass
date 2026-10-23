@@ -2,7 +2,8 @@
      minimise / maximise / close buttons on the right (Electron title bar overlay). -->
 <script lang="ts">
   import { ui, PAGES } from '../lib/ui.svelte';
-  import { Search } from '../lib/icons';
+  import { Search, Sparkles } from '../lib/icons';
+  import { updates } from '../lib/updates.svelte';
   import logo from '../assets/compass.svg';
 
   /** During install and setup there is nothing to search yet. */
@@ -28,7 +29,13 @@
       <span class="kbd">Ctrl K</span>
     </button>
   {/if}
-  <div class="controls-space"></div>
+  <div class="controls-space">
+    {#if !minimal && updates.status === 'available' && updates.info?.version}
+      <button class="update" onclick={() => (updates.open = true)} title="A new version of Compass is ready">
+        <Sparkles size={13} /> Update to {updates.info.version}
+      </button>
+    {/if}
+  </div>
 </header>
 
 <style>
@@ -66,6 +73,35 @@
     font-weight: 520;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+  .controls-space {
+    display: flex;
+    justify-content: flex-end;
+    min-width: 0;
+  }
+  .update {
+    -webkit-app-region: no-drag;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    height: 1.625rem;
+    padding: 0 0.75rem;
+    border: 0;
+    border-radius: 999px;
+    background: var(--accent);
+    color: var(--accent-ink);
+    font-size: var(--fs-xs);
+    font-weight: 650;
+    white-space: nowrap;
+    animation: glow 2.4s var(--ease) 3;
+  }
+  .update:hover {
+    background: var(--accent-strong);
+  }
+  @keyframes glow {
+    50% {
+      box-shadow: 0 0 0 4px var(--accent-soft);
+    }
   }
   .search {
     -webkit-app-region: no-drag;

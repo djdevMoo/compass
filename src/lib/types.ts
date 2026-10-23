@@ -151,6 +151,10 @@ export interface Settings {
   theme: Theme;
   /** Accent colour as #rrggbb. */
   accent: string;
+  /** Ask GitHub for new versions in the background. */
+  autoCheckUpdates: boolean;
+  /** Version that last ran, to say "Updated to …" once after an update. */
+  lastVersion: string;
   uiScale: number;
   sidebarCollapsed: boolean;
   lastPage: string;

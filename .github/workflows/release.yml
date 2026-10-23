@@ -33,6 +33,20 @@ jobs:
       - run: npm run fetch-electron
       - run: npm run package
 
+      # The tag's message becomes "What's new" (the app's update dialog shows it).
+      - name: Write release notes
+        shell: bash
+        run: |
+          git fetch --quiet --depth=1 origin "+refs/tags/${GITHUB_REF_NAME}:refs/tags/${GITHUB_REF_NAME}"
+          {
+            echo "## What's new"
+            echo
+            git tag -l --format='%(contents:body)' "$GITHUB_REF_NAME"
+            echo
+            cat .github/release-notes.md
+          } > notes.md
+          cat notes.md
+
       - name: Publish the release
         shell: bash
         env:
@@ -43,5 +57,5 @@ jobs:
           if gh release view "$GITHUB_REF_NAME" > /dev/null 2>&1; then
             gh release upload "$GITHUB_REF_NAME" "$zip" --clobber
           else
-            gh release create "$GITHUB_REF_NAME" "$zip" --title "Compass ${version}" --notes-file .github/release-notes.md
+            gh release create "$GITHUB_REF_NAME" "$zip" --title "Compass ${version}" --notes-file notes.md
           fi

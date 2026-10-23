@@ -4,12 +4,16 @@ import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { Store } from './store.mjs';
 import * as installer from './installer.mjs';
+import * as updater from './updater.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
 const APP_ID = installer.APP_ID;
 const DEV_URL = process.env.COMPASS_DEV_URL || null;
 const ICON = path.join(ROOT, 'build', 'icon.ico');
+/** `--update --wait-pid=N`: started by an older Compass that is about to quit. */
+const UPDATING = process.argv.includes('--update');
+const WAIT_PID = Number(process.argv.find((a) => a.startsWith('--wait-pid='))?.split('=')[1]) || 0;
 
 const THEMES = {
   dark: { bg: '#0e0f13', symbol: '#c9cdd6' },
@@ -51,24 +55,32 @@ if (process.argv.includes('--install-shortcuts')) {
   });
 } else if (process.argv.includes('--uninstall')) {
   app.whenReady().then(runUninstall);
-} else if (!app.requestSingleInstanceLock()) {
-  if (installer.needsInstall()) {
-    app.whenReady().then(() => {
-      dialog.showMessageBoxSync({
-        type: 'info',
-        title: 'Compass',
-        message: 'Compass is already open.',
-        detail: 'Close it first, then run this again to install or update.',
-      });
-      app.quit();
-    });
-  } else {
-    app.quit();
-  }
-} else if (installer.needsInstall()) {
-  startInstaller();
 } else {
-  start();
+  dispatch();
+}
+
+async function dispatch() {
+  // Let the old copy close first, or the lock below (and its open files) would block us.
+  if (WAIT_PID) await updater.waitForExit(WAIT_PID);
+  if (!app.requestSingleInstanceLock()) {
+    if (installer.needsInstall()) {
+      app.whenReady().then(() => {
+        dialog.showMessageBoxSync({
+          type: 'info',
+          title: 'Compass',
+          message: 'Compass is already open.',
+          detail: 'Close it first, then run this again to install or update.',
+        });
+        app.quit();
+      });
+    } else {
+      app.quit();
+    }
+  } else if (installer.needsInstall()) {
+    startInstaller();
+  } else {
+    start();
+  }
 }
 
 /** Theme sync and safe link opening, shared by the installer and the app windows. */
@@ -121,7 +133,9 @@ function startInstaller() {
       if (running) return;
       running = true;
       try {
-        await installer.install({ desktopShortcut: opts?.desktopShortcut !== false }, (p, label) => {
+        const desktopShortcut =
+          typeof opts?.desktopShortcut === 'boolean' ? opts.desktopShortcut : installer.hasDesktopShortcut();
+        await installer.install({ desktopShortcut }, (p, label) => {
           if (!e.sender.isDestroyed()) e.sender.send('install:progress', p, label);
         });
       } finally {
@@ -138,7 +152,9 @@ function startInstaller() {
     win.once('ready-to-show', () => win.show());
     win.webContents.setWindowOpenHandler(() => ({ action: 'deny' }));
     win.webContents.on('will-navigate', (e) => e.preventDefault());
-    win.loadFile(path.join(ROOT, 'dist', 'index.html'), { query: { mode: 'install' } });
+    win.loadFile(path.join(ROOT, 'dist', 'index.html'), {
+      query: UPDATING ? { mode: 'install', auto: '1' } : { mode: 'install' },
+    });
   });
   app.on('window-all-closed', () => app.quit());
 }
@@ -343,6 +359,24 @@ function start() {
     ipcMain.handle('data:dir', () => app.getPath('userData'));
     ipcMain.handle('data:open-folder', () => shell.openPath(app.getPath('userData')));
 
+    // Updates: check GitHub, then download + verify + hand over to the new version.
+    ipcMain.handle('update:check', () => updater.check());
+    let updating = false;
+    ipcMain.handle('update:install', async (e) => {
+      if (updating) return;
+      updating = true;
+      try {
+        const exe = await updater.stage((p, label) => {
+          if (!e.sender.isDestroyed()) e.sender.send('update:progress', p, label);
+        });
+        updater.handOff(exe);
+        setTimeout(() => app.quit(), 200); // the window's close handler saves first
+      } catch (err) {
+        updating = false;
+        throw err;
+      }
+    });
+
     // "Start over": back up, then empty everything so setup runs again.
     ipcMain.handle('data:reset', () => {
       store.backup('pre-reset');
@@ -370,6 +404,8 @@ function start() {
     }
     registerIpc();
     createWindow();
+    // Leftover update downloads are removed once the new version is up and running.
+    if (app.isPackaged) setTimeout(updater.cleanupStaged, 15000);
   });
 
   app.on('window-all-closed', () => {

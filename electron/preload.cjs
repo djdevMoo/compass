@@ -13,6 +13,12 @@ contextBridge.exposeInMainWorld('compass', {
   openExternal: (url) => ipcRenderer.invoke('app:open-external', url),
   setTheme: (source, resolved) => ipcRenderer.invoke('win:theme', source, resolved),
   resetData: () => ipcRenderer.invoke('data:reset'),
+  checkForUpdate: () => ipcRenderer.invoke('update:check'),
+  installUpdate: () => ipcRenderer.invoke('update:install'),
+  onUpdateProgress: (fn) => {
+    ipcRenderer.removeAllListeners('update:progress');
+    ipcRenderer.on('update:progress', (_e, p, label) => fn(p, label));
+  },
   installInfo: () => ipcRenderer.invoke('install:info'),
   install: (opts) => ipcRenderer.invoke('install:run', opts),
   launchInstalled: () => ipcRenderer.invoke('install:launch'),

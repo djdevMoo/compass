@@ -17,7 +17,8 @@
 <div class="ring" style:width={size} style:height={size} style:--ring={color}>
   <svg viewBox="0 0 100 100" aria-hidden="true">
     <circle cx="50" cy="50" {r} class="track" stroke-width={stroke} />
-    <circle
+    <!-- Nothing at 0%: a round line cap would otherwise draw a stray dot. -->
+    {#if v > 0}<circle
       cx="50"
       cy="50"
       {r}
@@ -25,7 +26,7 @@
       stroke-width={stroke}
       stroke-dasharray="{c * v} {c}"
       transform="rotate(-90 50 50)"
-    />
+    />{/if}
   </svg>
   {#if children}<div class="inner">{@render children()}</div>{/if}
 </div>

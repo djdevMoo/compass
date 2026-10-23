@@ -9,10 +9,11 @@
   import { CURRENCIES } from '../lib/money';
   import { finance } from '../lib/finance.svelte';
   import { PAGES, toast } from '../lib/ui.svelte';
+  import { updates } from '../lib/updates.svelte';
   import { desktop, writes } from '../lib/db';
   import { fmt } from '../lib/dates';
   import { version } from '../../package.json';
-  import { Download, Upload, HardDrive, FolderOpen, Keyboard, RotateCcw, LayoutGrid } from '../lib/icons';
+  import { Download, Upload, HardDrive, FolderOpen, Keyboard, RotateCcw, LayoutGrid, Sparkles, RefreshCw } from '../lib/icons';
   import type { ModuleId, PayFrequency, Settings, Theme } from '../lib/types';
 
   let dataDir = $state('');
@@ -291,6 +292,38 @@
         <span class="small muted">Wipe everything and run first-time setup again.</span>
         <button class="btn danger sm" onclick={() => (confirmReset = true)}><RotateCcw size={14} /> Start over</button>
       </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head"><Sparkles size={16} /><h2>Updates</h2><span class="sub">Version {version}</span></div>
+      {#if updates.supported}
+        <div class="spread">
+          <span class="small" class:muted={updates.status !== 'available'}>
+            {#if updates.status === 'checking'}Checking…
+            {:else if updates.status === 'available'}<b>Compass {updates.info?.version} is available.</b>
+            {:else if updates.status === 'downloading'}Updating… {Math.round(updates.progress * 100)}%
+            {:else if updates.status === 'current'}You're on the latest version.
+            {:else if updates.status === 'error'}<span class="danger">Couldn't check: {updates.error}</span>
+            {:else}Not checked yet.{/if}
+          </span>
+          {#if updates.status === 'available'}
+            <button class="btn primary sm" onclick={() => (updates.open = true)}>See update</button>
+          {:else}
+            <button class="btn sm" disabled={updates.status === 'checking' || updates.status === 'downloading'} onclick={() => updates.check(true)}>
+              <RefreshCw size={14} /> Check now
+            </button>
+          {/if}
+        </div>
+        <label class="check">
+          <input type="checkbox" checked={settings.v.autoCheckUpdates} onchange={(e) => settings.set({ autoCheckUpdates: (e.currentTarget as HTMLInputElement).checked })} />
+          Check for updates automatically
+        </label>
+        <p class="hint xs faint">
+          Compass asks GitHub for the latest version number. Nothing about you or your data is sent. Updates only install when you click Update.
+        </p>
+      {:else}
+        <p class="small muted">Updates work in the desktop app.</p>
+      {/if}
     </section>
 
     <section class="card">

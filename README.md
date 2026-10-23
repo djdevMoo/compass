@@ -31,7 +31,7 @@
 
 Compass installs just for your Windows account (no admin rights needed) and adds Start menu and Desktop shortcuts. You can then delete the downloaded folder.
 
-- **Update:** do the same with a newer release. It offers **Update** and keeps your data.
+- **Update:** Compass checks for new versions by itself. When one is out, an **Update** button appears in the title bar. One click downloads it, checks it against the checksum GitHub publishes, installs it and reopens Compass with your data. You can also check in **Settings › Updates**, or run a newer `Compass.exe` by hand.
 - **Uninstall:** Settings › Apps › Installed apps › Compass › Uninstall. Your data is kept unless you tick the box.
 
 Requires Windows 10 or 11 (64-bit).
@@ -40,7 +40,7 @@ Requires Windows 10 or 11 (64-bit).
 
 ## Your data
 
-Everything stays in one file on your PC (`%APPDATA%\Compass\compass.db`). Nothing is uploaded and there are no accounts or tracking. Compass backs up automatically every day (keeping the last 14), and **Settings › Your data** can export everything to a readable JSON file or import it back.
+Everything stays in one file on your PC (`%APPDATA%\Compass\compass.db`). Nothing is uploaded and there are no accounts or tracking. The only thing Compass ever asks the internet is GitHub's "what's the latest version?" (switch it off in Settings › Updates). Compass backs up automatically every day (keeping the last 14), and **Settings › Your data** can export everything to a readable JSON file or import it back.
 
 ## Build from source
 
@@ -70,7 +70,7 @@ Builds `release/Compass-<version>-win-x64.zip`.
 
 If Smart App Control is on, `npm install` can't unpack Electron. Run `npm run fetch-electron` afterwards: it downloads the official release, checks its SHA-256 and unpacks it with Windows' own `tar`.
 
-**Releasing:** bump `version` in `package.json`, commit, then push a matching tag (for example `git tag v0.3.0 && git push --tags`). GitHub Actions tests, builds and publishes the release.
+**Releasing:** bump `version` in `package.json`, commit, then push a matching annotated tag whose message lists the changes (for example `git tag -a v0.5.0 -m "Compass 0.5.0" -m "- New thing"` then `git push origin v0.5.0`). GitHub Actions tests, builds and publishes the release, the tag message becomes "What's new", and installed copies offer the update.
 
 ### How it's built
 

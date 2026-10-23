@@ -145,6 +145,11 @@ export async function install({ desktopShortcut }, onProgress) {
   onProgress(1, 'Done');
 }
 
+/** Whether this user currently has a Compass shortcut on their Desktop (kept as-is on update). */
+export function hasDesktopShortcut() {
+  return fs.existsSync(shortcutPaths().desktop);
+}
+
 export function launchInstalled() {
   spawn(path.join(installDir(), 'Compass.exe'), [], { detached: true, stdio: 'ignore', cwd: installDir() }).unref();
 }

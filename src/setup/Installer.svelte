@@ -11,6 +11,8 @@
   let label = $state('');
   let error = $state('');
   let desktopShortcut = $state(true);
+  /** Started by the in-app updater: install straight away and reopen, no clicks. */
+  const auto = new URLSearchParams(location.search).get('auto') === '1';
 
   onMount(async () => {
     info = desktop
@@ -20,6 +22,10 @@
       progress = p;
       label = l;
     });
+    if (auto) {
+      await run();
+      if (phase === 'done') desktop?.launchInstalled();
+    }
   });
 
   const updating = $derived(!!info?.installedVersion);
@@ -32,7 +38,8 @@
     progress = 0;
     error = '';
     try {
-      if (desktop) await desktop.install({ desktopShortcut });
+      // On an automatic update, keep whatever Desktop shortcut the user already has.
+      if (desktop) await desktop.install(auto ? {} : { desktopShortcut });
       else for (let i = 1; i <= 20; i++) await new Promise((r) => setTimeout(r, 60)).then(() => ((progress = i / 20), (label = 'Copying files')));
       progress = 1;
       phase = 'done';
@@ -77,11 +84,15 @@
       </button>
       <p class="xs faint">Version {info.version}</p>
     {:else if phase === 'installing'}
-      <h1>{updating ? 'Updating…' : 'Installing…'}</h1>
+      <h1>{auto ? `Updating Compass to ${info.version}…` : updating ? 'Updating…' : 'Installing…'}</h1>
       <div class="bar" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(progress * 100)}>
         <div style:width="{progress * 100}%"></div>
       </div>
       <p class="small muted num">{label} · {Math.round(progress * 100)}%</p>
+    {:else if auto}
+      <div class="done-badge"><Check size={28} strokeWidth={3} /></div>
+      <h1>Updated to {info.version}</h1>
+      <p class="muted lead">Opening Compass…</p>
     {:else}
       <div class="done-badge"><Check size={28} strokeWidth={3} /></div>
       <h1>{updating ? 'Compass is up to date' : 'Compass is installed'}</h1>

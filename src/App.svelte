@@ -17,6 +17,9 @@
   import SettingsPage from './pages/Settings.svelte';
   import Setup from './setup/Setup.svelte';
   import Installer from './setup/Installer.svelte';
+  import UpdateDialog from './shell/UpdateDialog.svelte';
+  import { updates } from './lib/updates.svelte';
+  import { version } from '../package.json';
 
   // What the window is showing: the installer, first-run setup, or the app itself.
   const mode = new URLSearchParams(location.search).get('mode') === 'install' ? 'install' : 'app';
@@ -66,6 +69,12 @@
     const last = settings.v.lastPage as PageId;
     ui.page = visiblePages().some((p) => p.id === last) ? last : 'home';
     phase = 'app';
+    // Say so once after an update, then remember this version.
+    if (settings.v.lastVersion && settings.v.lastVersion !== version) {
+      toast.show(`Compass was updated to ${version}`, { ms: 6000 });
+    }
+    if (settings.v.lastVersion !== version) settings.set({ lastVersion: version });
+    updates.start();
   }
 
   $effect(() => {
@@ -158,6 +167,7 @@
     </main>
     <CommandPalette />
     <QuickAdd />
+    <UpdateDialog />
   {:else if failed}
     <div class="boot-error">
       <h2>Compass couldn't open its data</h2>

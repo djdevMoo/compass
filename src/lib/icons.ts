@@ -74,3 +74,4 @@ export { default as Archive } from '@lucide/svelte/icons/archive';
 export { default as LayoutGrid } from '@lucide/svelte/icons/layout-grid';
 export { default as Pipette } from '@lucide/svelte/icons/pipette';
 export { default as Palette } from '@lucide/svelte/icons/palette';
+export { default as RefreshCw } from '@lucide/svelte/icons/refresh-cw';
