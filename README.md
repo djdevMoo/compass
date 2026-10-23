@@ -15,7 +15,7 @@
 - **Aspirations:** bigger goals broken into steps you can tick off.
 - **Fitness:** workouts, a weekly target with streaks, and your weight trend.
 - **Diet:** meals, calories, protein, water and a takeout limit.
-- **Made for you:** a two-minute first-run setup asks about your pay, goal, costs and habits, then builds your plan. Switch tabs on or off, pick your currency, and choose dark or light.
+- **Made for you:** a two-minute first-run setup asks about your pay, goal, costs and habits, then builds your plan. Switch tabs on or off, pick your currency, choose dark or light, and make it yours with any accent colour (it stays readable in both themes).
 - **Fast and keyboard-friendly:** **Ctrl K** to jump anywhere, **Ctrl E** to log a spend, **Ctrl 1–6** for tabs, **Ctrl + / −** to resize everything. Undo after every change.
 
 <p>

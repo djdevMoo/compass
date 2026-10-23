@@ -4,6 +4,7 @@
 import { backend, writes } from './db';
 import { setDateLocale, toISO } from './dates';
 import { localeFor, setCurrency } from './money';
+import { DEFAULT_ACCENT, normalizeHex } from './accent';
 import type {
   Account, BalancePoint, Bill, BudgetLine, Contribution, DayLog, Goal, Meal, ModuleId,
   PlaybookItem, Settings, Spend, WeightEntry, Wish, Workout,
@@ -93,6 +94,7 @@ export const DEFAULT_SETTINGS: Settings = {
   currency: 'EUR',
   modules: [...ALL_MODULES],
   theme: 'dark',
+  accent: DEFAULT_ACCENT,
   uiScale: 1,
   sidebarCollapsed: false,
   lastPage: 'home',
@@ -125,7 +127,12 @@ class SettingsStore {
 
   hydrate(raw: unknown): void {
     const saved = raw && typeof raw === 'object' ? (raw as Partial<Settings>) : {};
-    this.v = { ...DEFAULT_SETTINGS, ...saved, modules: [...(saved.modules ?? DEFAULT_SETTINGS.modules)] };
+    this.v = {
+      ...DEFAULT_SETTINGS,
+      ...saved,
+      modules: [...(saved.modules ?? DEFAULT_SETTINGS.modules)],
+      accent: normalizeHex(saved.accent) ?? DEFAULT_ACCENT,
+    };
     applyLocale(this.v.currency);
   }
 

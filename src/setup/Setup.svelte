@@ -3,6 +3,7 @@
   import { fly } from 'svelte/transition';
   import MoneyInput from '../lib/ui/MoneyInput.svelte';
   import Segmented from '../lib/ui/Segmented.svelte';
+  import AccentPicker from '../lib/ui/AccentPicker.svelte';
   import { settings, uid } from '../lib/store.svelte';
   import { CURRENCIES, money } from '../lib/money';
   import { fmt, nthPayday, todayISO } from '../lib/dates';
@@ -43,7 +44,7 @@
       has('fitness') && { id: 'fitness', title: 'Fitness', sub: 'How often do you want to work out?', optional: true },
       has('diet') && { id: 'diet', title: 'Food and water', sub: 'Daily targets. Not sure? Keep these and change them later.', optional: true },
       has('goals') && { id: 'goals', title: 'What are you working towards?', sub: 'Bigger goals: a skill, a trip, a milestone. You can break them into steps later.', optional: true },
-      { id: 'look', title: 'How should it look?', sub: 'Dark is easiest on the eyes at night. You can switch any time.' },
+      { id: 'look', title: 'How should it look?', sub: 'Pick a theme and a colour. Dark is easiest on the eyes at night. You can change both any time.' },
       { id: 'done', title: a.name.trim() ? `You’re all set, ${a.name.trim()}` : 'You’re all set', sub: 'Here’s what Compass set up for you.' },
     ].filter(Boolean) as Step[],
   );
@@ -88,6 +89,11 @@
   function setCurrency(code: string) {
     a.currency = code;
     settings.set({ currency: code }); // so every amount on screen uses it straight away
+  }
+
+  function setAccent(hex: string) {
+    a.accent = hex;
+    settings.set({ accent: hex }); // live preview
   }
 
   function setTheme(t: Theme) {
@@ -348,6 +354,10 @@
                   <span class="tick">{#if a.theme === t.value}<Check size={14} strokeWidth={3} />{/if}</span>
                 </button>
               {/each}
+            </div>
+            <div class="field">
+              <span class="label">Accent colour</span>
+              <AccentPicker bind:value={() => a.accent, (v) => setAccent(v)} />
             </div>
 
           {:else if step.id === 'done'}

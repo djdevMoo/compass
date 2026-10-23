@@ -42,6 +42,7 @@ describe('setup', () => {
       groceries: 6_000,
       cooldownHours: 48,
       takeoutCap: 3,
+      accent: '#fb923c',
     });
     a.bills[0].monthly = 2_500;
     a.bills[1].monthly = 3_000;
@@ -55,6 +56,7 @@ describe('setup', () => {
     expect(s.payAnchor).toBe('2026-10-28');
     expect(s.goalTarget).toBe(2_000_000);
     expect(s.wishCooldownHours).toBe(48);
+    expect(s.accent).toBe('#fb923c');
 
     expect(store.db.accounts.items).toHaveLength(1);
     expect(store.db.accounts.items[0].balance).toBe(250_000);

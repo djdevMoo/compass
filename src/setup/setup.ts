@@ -4,6 +4,7 @@ import { ALL_MODULES, db, finishSetup, settings, uid } from '../lib/store.svelte
 import { buildPlan, type Plan } from '../lib/plan';
 import { CURRENCIES, money } from '../lib/money';
 import { payPeriod, todayISO } from '../lib/dates';
+import { DEFAULT_ACCENT } from '../lib/accent';
 import type { Cents, ISODate, ModuleId, PayFrequency, Theme } from '../lib/types';
 
 export interface BillAnswer {
@@ -41,6 +42,7 @@ export interface Answers {
   takeoutCap: number;
   aspirations: string[];
   theme: Theme;
+  accent: string;
 }
 
 /** Best guess at someone's currency from their Windows language. */
@@ -83,6 +85,7 @@ export function defaultAnswers(): Answers {
     takeoutCap: 2,
     aspirations: ['', '', ''],
     theme: 'dark',
+    accent: DEFAULT_ACCENT,
   };
 }
 
@@ -121,6 +124,7 @@ export async function applySetup(a: Answers): Promise<void> {
     currency: a.currency,
     modules: [...a.modules],
     theme: a.theme,
+    accent: a.accent,
     lastPage: 'home',
     payAmount: a.pay ?? 0,
     payFrequency: a.freq,

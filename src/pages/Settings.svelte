@@ -4,6 +4,7 @@
   import Segmented from '../lib/ui/Segmented.svelte';
   import MoneyInput from '../lib/ui/MoneyInput.svelte';
   import Modal from '../lib/ui/Modal.svelte';
+  import AccentPicker from '../lib/ui/AccentPicker.svelte';
   import { ALL_MODULES, settings } from '../lib/store.svelte';
   import { CURRENCIES } from '../lib/money';
   import { finance } from '../lib/finance.svelte';
@@ -117,6 +118,11 @@
             { value: 'system', label: 'Match Windows' },
           ]}
         />
+      </div>
+      <div class="field">
+        <span class="label">Accent colour</span>
+        <AccentPicker bind:value={() => settings.v.accent, (v) => settings.set({ accent: v })} />
+        <span class="hint">Buttons, highlights and focus rings. Each tab keeps its own colour.</span>
       </div>
       <label class="field">
         <span>Size of everything: <b class="num">{Math.round(settings.v.uiScale * 100)}%</b></span>

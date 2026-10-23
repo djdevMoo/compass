@@ -72,3 +72,5 @@ export { default as CirclePause } from '@lucide/svelte/icons/circle-pause';
 export { default as CirclePlay } from '@lucide/svelte/icons/circle-play';
 export { default as Archive } from '@lucide/svelte/icons/archive';
 export { default as LayoutGrid } from '@lucide/svelte/icons/layout-grid';
+export { default as Pipette } from '@lucide/svelte/icons/pipette';
+export { default as Palette } from '@lucide/svelte/icons/palette';

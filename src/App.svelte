@@ -77,6 +77,10 @@
     document.documentElement.style.setProperty('--ui-scale', String(settings.v.uiScale));
   });
 
+  $effect(() => {
+    document.documentElement.style.setProperty('--accent-base', settings.v.accent);
+  });
+
   const clampScale = (s: number) => Math.round(Math.min(1.4, Math.max(0.8, s)) * 100) / 100;
 
   function onkeydown(e: KeyboardEvent) {

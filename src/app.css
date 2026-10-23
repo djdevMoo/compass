@@ -4,6 +4,8 @@
 
 :root {
   --ui-scale: 1;
+  /* The chosen accent colour (Settings › Appearance). Every accent shade below is derived from it. */
+  --accent-base: #34d399;
   --titlebar-h: 40px;
   --sidebar-w: 15rem;
   --rail-w: 4.25rem;
@@ -46,10 +48,11 @@
   --text-3: #868c99;
   --track: #252a34;
 
-  --accent: #34d399;
-  --accent-strong: #6ee7b7;
-  --accent-ink: #03140c;
-  --accent-soft: rgb(52 211 153 / 0.13);
+  /* Bright enough to read on dark surfaces, whatever colour was picked. */
+  --accent: oklch(from var(--accent-base) clamp(0.72, l, 0.86) c h);
+  --accent-strong: oklch(from var(--accent) calc(l + 0.06) c h);
+  --accent-ink: oklch(from var(--accent) 0.2 calc(c * 0.35) h);
+  --accent-soft: color-mix(in srgb, var(--accent) 13%, transparent);
 
   --ok: #34d399;
   --warn: #fbbf24;
@@ -89,10 +92,11 @@
   --text-3: #646b78;
   --track: #e3e6ec;
 
-  --accent: #047857;
-  --accent-strong: #065f46;
+  /* Deep enough to read on white, and to carry white button text. */
+  --accent: oklch(from var(--accent-base) clamp(0.42, l, 0.53) c h);
+  --accent-strong: oklch(from var(--accent) calc(l - 0.06) c h);
   --accent-ink: #ffffff;
-  --accent-soft: rgb(4 120 87 / 0.1);
+  --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
 
   --ok: #047857;
   --warn: #b45309;

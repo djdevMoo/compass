@@ -6,7 +6,7 @@
   import { settings } from '../lib/store.svelte';
   import { desktop } from '../lib/db';
   import {
-    ArrowRight, Receipt, PiggyBank, Gift, Dumbbell, Utensils, Scale, Mountain, Moon, PanelLeft, Download, Search,
+    ArrowRight, Receipt, PiggyBank, Gift, Dumbbell, Utensils, Scale, Mountain, Moon, PanelLeft, Download, Search, Palette,
   } from '../lib/icons';
 
   interface Cmd {
@@ -53,6 +53,14 @@
     { id: 'add-weight', module: 'fitness', label: 'Log weight', hint: 'Body weight in kg', group: 'Add', icon: Scale, run: quick('weight') },
     { id: 'add-wish', module: 'wishlist', label: 'Add to wishlist', hint: 'Starts the 72-hour wait', group: 'Add', icon: Gift, run: quick('wish') },
     { id: 'add-goal', module: 'goals', label: 'New aspiration', hint: 'A goal with steps', group: 'Add', icon: Mountain, run: quick('goal') },
+    {
+      id: 'app-accent',
+      label: 'Change accent colour',
+      hint: 'Pick a colour for buttons and highlights',
+      group: 'App',
+      icon: Palette,
+      run: () => ui.go('settings'),
+    },
     {
       id: 'app-theme',
       label: 'Switch light / dark',

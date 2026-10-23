@@ -149,6 +149,8 @@ export interface Settings {
   /** Which tabs are switched on. */
   modules: ModuleId[];
   theme: Theme;
+  /** Accent colour as #rrggbb. */
+  accent: string;
   uiScale: number;
   sidebarCollapsed: boolean;
   lastPage: string;
